@@ -1,10 +1,10 @@
-from sqlalchemy.ext.hybrid import hybrid_property
-
-from sqlalchemy import Boolean, Date, ForeignKey, String
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from passlib.context import CryptContext
+from sqlalchemy import Boolean, Date, ForeignKey, String
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context: CryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto')
+
 
 class Base(DeclarativeBase):
     pass
