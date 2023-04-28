@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: 9dad237f1adc
+Revision ID: 293bc77c59b2
 Revises: 
-Create Date: 2023-04-28 15:54:31.853779
+Create Date: 2023-04-28 20:36:14.857338
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9dad237f1adc'
+revision = '293bc77c59b2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,20 +21,24 @@ def upgrade() -> None:
     op.create_table('city',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=128), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('user_account',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String(length=32), nullable=False),
     sa.Column('last_name', sa.String(length=32), nullable=False),
-    sa.Column('password', sa.String(length=32), nullable=False),
+    sa.Column('_hashed_password', sa.String(length=512), nullable=False),
     sa.Column('email', sa.String(length=64), nullable=False),
     sa.Column('is_admin', sa.Boolean(), nullable=False),
     sa.Column('other_name', sa.String(length=32), nullable=True),
     sa.Column('phone', sa.String(length=32), nullable=True),
     sa.Column('birthday', sa.Date(), nullable=True),
+    sa.Column('city', sa.Integer(), nullable=True),
     sa.Column('additional_info', sa.String(length=256), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['city'], ['city.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email')
     )
     # ### end Alembic commands ###
 

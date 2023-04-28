@@ -1,8 +1,10 @@
-from typing import Optional
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from sqlalchemy import Boolean, Date, ForeignKey, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from passlib.context import CryptContext
 
+pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class Base(DeclarativeBase):
     pass
@@ -14,19 +16,27 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str] = mapped_column(String(32))
     last_name: Mapped[str] = mapped_column(String(32))
-    password: Mapped[str] = mapped_column(String(32))
-    email: Mapped[str] = mapped_column(String(64))
+    _hashed_password: Mapped[str] = mapped_column(String(512))
+    email: Mapped[str] = mapped_column(String(64), unique=True)
     is_admin: Mapped[bool] = mapped_column(Boolean)
 
     other_name: Mapped[str | None] = mapped_column(String(32))
     phone: Mapped[str | None] = mapped_column(String(32))
     birthday: Mapped[str | None] = mapped_column(Date())
-    city: Mapped[int | None] = ForeignKey('user.id')
+    city: Mapped[int | None] = mapped_column(ForeignKey('city.id'))
     additional_info: Mapped[str | None] = mapped_column(String(256))
 
     city_relation: Mapped['City'] = relationship(
-        back_populates='user_relation', cascade='all, delete-orphan'
+        back_populates='user_relation',
     )
+
+    @hybrid_property
+    def password(self):
+        return self._hashed_password
+
+    @password.setter
+    def password(self, password: str):
+        self._hashed_password = pwd_context.hash(password)
 
     def __repr__(self) -> str:
         return f'User(id={self.id!r}, first_name={self.first_name!r}, last_name={self.last_name!r})'
@@ -36,10 +46,11 @@ class City(Base):
     __tablename__ = 'city'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(128))
+    name: Mapped[str] = mapped_column(String(128), unique=True)
 
     user_relation: Mapped['User'] = relationship(
-        back_populates='city_relation'
+        back_populates='city_relation',
+        cascade='all, delete-orphan',
     )
 
     def __repr__(self) -> str:
