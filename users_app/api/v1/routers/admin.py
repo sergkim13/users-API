@@ -1,6 +1,7 @@
 from typing import Annotated
-from fastapi.responses import JSONResponse
+
 from fastapi import APIRouter, Cookie, HTTPException
+from fastapi.responses import JSONResponse
 
 faske_users = [
     {'id': 1, 'username': 'potter', 'password': '112345', 'is_admin': False},
@@ -9,8 +10,8 @@ faske_users = [
 ]
 
 router = APIRouter(
-    prefix="/api/v1/private",
-    tags=["admin"],
+    prefix='/api/v1/private',
+    tags=['admin'],
 )
 
 
@@ -18,8 +19,8 @@ router = APIRouter(
 async def private_user_list(is_logged_in: Annotated[str | None, Cookie()] = None):
     '''Shows user's info list with pagination.'''
     if not is_logged_in:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    return JSONResponse({"is_logged_in": 'Yep'})
+        raise HTTPException(status_code=401, detail='Not authenticated')
+    return JSONResponse({'is_logged_in': 'Yep'})
 
 
 @router.post('/users')
