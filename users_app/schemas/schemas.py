@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field
 from datetime import date
+
+from pydantic import BaseModel, validator
 
 
 # Auth
@@ -17,6 +18,9 @@ class CurrentUserResponseModel(BaseModel):
     phone: str
     birthday: date
     is_admin: bool
+
+    class Config:
+        orm_mode = True
 
 
 # User list
@@ -69,6 +73,15 @@ class PrivateDetailUserResponseModel(CurrentUserResponseModel):
     additional_info: str
     password: str
 
+    @validator('city', pre=True)
+    def city_default(cls, value):
+        if value is None:
+            return 0
+        return value
+
+    class Config:
+        orm_mode = True
+
 
 # Private list
 class CitiesHintModel(BaseModel):
@@ -100,6 +113,9 @@ class PrivateCreateUserModel(BaseModel):
     additional_info: str | None
     is_admin: bool
     password: str
+
+    class Config:
+        orm_mode = True
 
 
 # Private update
