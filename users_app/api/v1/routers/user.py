@@ -1,7 +1,5 @@
-from http import HTTPStatus
-from pydantic import BaseModel
-from fastapi.responses import JSONResponse
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter
+
 
 faske_users = [
     {'id': 1, 'username': 'potter', 'password': '112345', 'is_admin': False},
@@ -10,8 +8,8 @@ faske_users = [
 ]
 
 router = APIRouter(
-    prefix="/api/v1/users",
-    tags=["user"],
+    prefix='/api/v1/users',
+    tags=['user'],
 )
 
 
