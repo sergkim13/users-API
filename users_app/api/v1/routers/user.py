@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 
-
 faske_users = [
     {'id': 1, 'username': 'potter', 'password': '112345', 'is_admin': False},
     {'id': 2, 'username': 'weasly', 'password': '12', 'is_admin': False},

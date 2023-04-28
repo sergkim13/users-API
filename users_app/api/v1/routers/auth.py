@@ -1,6 +1,15 @@
-from fastapi import APIRouter
+from http import HTTPStatus
+
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+
+from users_app.schemas.schemas import (
+    CurrentUserResponseModel,
+    ErrorResponseModel,
+    LoginModel,
+)
+from users_app.services.users import UserService, get_user_service
 
 faske_users = [
     {'id': 1, 'username': 'potter', 'password': '112345', 'is_admin': False},
@@ -14,31 +23,31 @@ router = APIRouter(
 )
 
 
-class LoginSchema(BaseModel):
-    login: str
-    password: str
-
-
-def check_user(creds: LoginSchema) -> dict | str:
-    for user in faske_users:
-        if user['username'] == creds.login and user['password'] == creds.password:
-            return {'is_admin': user['is_admin']}
-    return 'Unknown user'
-
-
-@router.post('/login')
-async def login(credentials: LoginSchema):
+@router.post(
+    path='/login',
+    response_model=CurrentUserResponseModel,
+)
+async def login(
+    credentials: LoginModel,
+    response: JSONResponse,
+    user_service: UserService = Depends(get_user_service),
+) -> CurrentUserResponseModel:
     '''Log in to the system.'''
-    checking_result = check_user(credentials)
-    if 'Unknown user' in checking_result:
-        return JSONResponse({'message': 'Unknown user'})
-    response = JSONResponse({'message': 'Successfully logged in'})
+    user = await user_service.authenticate_user(credentials)
+    if not user:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='User not found',
+        )
     response.set_cookie(key='is_logged_in', value='True')
-    response.set_cookie(key='is_admin', value=checking_result['is_admin'])
-    return response
+    response.set_cookie(key='is_admin', value=user.is_admin)
+
+    return user
 
 
-@router.post('/logout')
-async def logout():
+@router.post(path='/logout')
+async def logout(response: JSONResponse) -> str:
     '''Log out of the system.'''
-    pass
+    response.delete_cookie('is_logged_in')
+    response.delete_cookie('is_admin')
+    return 'Logged out successfully.'

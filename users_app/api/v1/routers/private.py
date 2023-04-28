@@ -1,7 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, HTTPException
+from fastapi import APIRouter, Cookie, Depends, HTTPException
 from fastapi.responses import JSONResponse
+
+from users_app.schemas.schemas import PrivateCreateUserModel, PrivateDetailUserResponseModel
+from users_app.services.users import UserService, get_user_service
 
 faske_users = [
     {'id': 1, 'username': 'potter', 'password': '112345', 'is_admin': False},
@@ -23,10 +26,17 @@ async def private_user_list(is_logged_in: Annotated[str | None, Cookie()] = None
     return JSONResponse({'is_logged_in': 'Yep'})
 
 
-@router.post('/users')
-async def private_user_create():
+@router.post(
+    path='/users',
+    response_model=PrivateDetailUserResponseModel,
+)
+async def private_user_create(
+    user_data: PrivateCreateUserModel,
+    user_service: UserService = Depends(get_user_service),
+) -> PrivateDetailUserResponseModel:
     '''Creates a user.'''
-    pass
+    new_user = await user_service.create(user_data)
+    return new_user
 
 
 @router.get('/users/{pk}')
