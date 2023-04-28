@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 
 from users_app.schemas.schemas import (
     CurrentUserResponseModel,
@@ -11,11 +10,6 @@ from users_app.schemas.schemas import (
 )
 from users_app.services.users import UserService, get_user_service
 
-faske_users = [
-    {'id': 1, 'username': 'potter', 'password': '112345', 'is_admin': False},
-    {'id': 2, 'username': 'weasly', 'password': '12', 'is_admin': False},
-    {'id': 3, 'username': 'grandger', 'password': '192', 'is_admin': True},
-]
 
 router = APIRouter(
     prefix='/api/v1',
@@ -26,6 +20,7 @@ router = APIRouter(
 @router.post(
     path='/login',
     response_model=CurrentUserResponseModel,
+    summary='Вход в систему',
 )
 async def login(
     credentials: LoginModel,
@@ -45,8 +40,11 @@ async def login(
     return user
 
 
-@router.post(path='/logout')
-async def logout(response: JSONResponse) -> str:
+@router.get(
+    path='/logout',
+    summary='Выход из системы',
+)
+async def logout(response: JSONResponse) -> JSONResponse:
     '''Log out of the system.'''
     response.delete_cookie('is_logged_in')
     response.delete_cookie('is_admin')

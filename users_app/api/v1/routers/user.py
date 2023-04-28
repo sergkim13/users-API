@@ -1,10 +1,12 @@
 from fastapi import APIRouter
 
-faske_users = [
-    {'id': 1, 'username': 'potter', 'password': '112345', 'is_admin': False},
-    {'id': 2, 'username': 'weasly', 'password': '12', 'is_admin': False},
-    {'id': 3, 'username': 'grandger', 'password': '192', 'is_admin': True},
-]
+from users_app.schemas.schemas import (
+    CurrentUserResponseModel,
+    UpdateUserModel,
+    UpdateUserResponseModel,
+    UsersListResponseModel,
+)
+
 
 router = APIRouter(
     prefix='/api/v1/users',
@@ -12,19 +14,31 @@ router = APIRouter(
 )
 
 
-@router.get('/')
+@router.get(
+    path='/',
+    response_model=UsersListResponseModel,
+    summary='Постраничное получение кратких данных обо всех пользователях',
+)
 async def user_list():
     '''Shows user's info list with pagination.'''
     pass
 
 
-@router.get('/current')
+@router.get(
+    path='/current',
+    response_model=CurrentUserResponseModel,
+    summary='Получение данных о текущем пользователе',
+)
 async def user_detail():
     '''Shows info about current logged in user.'''
     pass
 
 
-@router.patch('/current')
-async def user_update():
+@router.patch(
+    path='/current',
+    summary='Изменение данных пользователя',
+    response_model=UpdateUserResponseModel,
+)
+async def user_update(data: UpdateUserModel) -> UpdateUserResponseModel:
     '''Update info about current logged in user.'''
     pass
