@@ -1,6 +1,7 @@
 from datetime import date
+from fastapi import Cookie, Query
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, root_validator, validator
 
 
 # Auth
@@ -16,11 +17,20 @@ class CurrentUserResponseModel(BaseModel):
     other_name: str
     email: str
     phone: str
-    birthday: date
+    birthday: date | None
     is_admin: bool
 
     class Config:
         orm_mode = True
+
+    @root_validator(pre=True)
+    def set_default(cls, values):
+        new_values = dict(values)
+        if not new_values.get('other_name'):
+            new_values['other_name'] = ''
+        if not new_values.get('phone'):
+            new_values['phone'] = ''
+        return new_values
 
 
 # User list
@@ -35,6 +45,9 @@ class UsersListElementModel(BaseModel):
     first_name: str
     last_name: str
     email: str
+
+    class Config:
+        orm_mode = True
 
 
 class UsersListMetaDataModel(BaseModel):
@@ -63,7 +76,19 @@ class UpdateUserResponseModel(BaseModel):
     other_name: str
     email: str
     phone: str
-    birthday: date
+    birthday: date | None
+
+    @root_validator(pre=True)
+    def set_default(cls, values):
+        new_values = dict(values)
+        if not new_values.get('other_name'):
+            new_values['other_name'] = ''
+        if not new_values.get('phone'):
+            new_values['phone'] = ''
+        return new_values
+
+    class Config:
+        orm_mode = True
 
 
 # Private detail
@@ -71,13 +96,15 @@ class PrivateDetailUserResponseModel(CurrentUserResponseModel):
     id: int
     city: int
     additional_info: str
-    password: str
 
-    @validator('city', pre=True)
-    def city_default(cls, value):
-        if value is None:
-            return 0
-        return value
+    @root_validator(pre=True)
+    def set_defaults(cls, values):
+        new_values = dict(values)
+        if not new_values.get('city'):
+            new_values['city'] = 0
+        if not new_values.get('additional_info'):
+            new_values['additional_info'] = ''
+        return new_values
 
     class Config:
         orm_mode = True
@@ -90,7 +117,7 @@ class CitiesHintModel(BaseModel):
 
 
 class PrivateUsersListHintMetaModel(BaseModel):
-    city: CitiesHintModel
+    city: list[CitiesHintModel | None]
 
 
 class PrivateUsersListMetaDataModel(UsersListMetaDataModel):
@@ -133,3 +160,15 @@ class CodelessErrorResponseModel(BaseModel):
 
 class ErrorResponseModel(CodelessErrorResponseModel):
     code: str
+
+
+# Query
+class QueryParams(BaseModel):
+    page: int = Query(ge=1)
+    size: int = Query(ge=1)
+
+
+# Security
+class Payload(BaseModel):
+    user_id: int
+    is_admin: bool
