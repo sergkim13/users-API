@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
+JWT_KEY = os.environ.get('JWT_KEY')
+ALGORITHM = os.environ.get('ALGORITHM')
 
 DB_HOST = os.environ.get('DB_HOST')
 DB_PORT = os.environ.get('DB_PORT')
