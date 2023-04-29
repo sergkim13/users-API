@@ -20,11 +20,11 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(64), unique=True)
     is_admin: Mapped[bool] = mapped_column(Boolean)
 
-    other_name: Mapped[str | None] = mapped_column(String(32))
-    phone: Mapped[str | None] = mapped_column(String(32))
-    birthday: Mapped[str | None] = mapped_column(Date())
-    city: Mapped[int | None] = mapped_column(ForeignKey('city.id'))
-    additional_info: Mapped[str | None] = mapped_column(String(256))
+    other_name: Mapped[str | None] = mapped_column(String(32), default=None)
+    phone: Mapped[str | None] = mapped_column(String(32), default=None)
+    birthday: Mapped[str | None] = mapped_column(Date(), default=None)
+    city: Mapped[int | None] = mapped_column(ForeignKey('city.id'), default=None)
+    additional_info: Mapped[str | None] = mapped_column(String(256), default=None)
 
     city_relation: Mapped['City'] = relationship(
         back_populates='user_relation',
