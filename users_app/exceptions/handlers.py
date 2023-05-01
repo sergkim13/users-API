@@ -1,4 +1,5 @@
 from http import HTTPStatus
+
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 

@@ -1,7 +1,7 @@
 from datetime import date
-from fastapi import Cookie, Query
 
-from pydantic import BaseModel, root_validator, validator
+from fastapi import Query
+from pydantic import BaseModel, root_validator
 
 
 # Auth

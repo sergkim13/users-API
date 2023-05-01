@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, Date, ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
 from users_app.security.hasher import get_pwd_context
 
 pwd_context = get_pwd_context()
@@ -34,7 +35,7 @@ class User(Base):
     def password(self):
         return self._hashed_password
 
-    @password.setter
+    @password.setter  # type: ignore
     def password(self, password: str):
         self._hashed_password = pwd_context.hash(password)
 

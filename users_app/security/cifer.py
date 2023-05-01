@@ -1,5 +1,6 @@
 import jwt
-from config import JWT_KEY, ALGORITHM
+
+from config import ALGORITHM, JWT_KEY
 from users_app.schemas.schemas import Payload
 
 

@@ -1,6 +1,7 @@
 from sqlalchemy import select
-from users_app.database.models import City
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from users_app.database.models import City
 
 
 class CityCRUD:

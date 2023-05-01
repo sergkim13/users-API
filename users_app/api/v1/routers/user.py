@@ -1,7 +1,8 @@
 from http import HTTPStatus
-from fastapi import APIRouter, Depends, Request
-from users_app.exceptions.constants import E400_401, E400_401_404
 
+from fastapi import APIRouter, Depends, Request
+
+from users_app.exceptions.constants import E400_401, E400_401_404
 from users_app.schemas.schemas import (
     CurrentUserResponseModel,
     QueryParams,
@@ -11,7 +12,6 @@ from users_app.schemas.schemas import (
 )
 from users_app.services.auth import AuthService, get_auth_service
 from users_app.services.users import UserService, get_user_service
-
 
 router = APIRouter(
     prefix='/users',

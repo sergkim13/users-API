@@ -1,7 +1,13 @@
 from sqlalchemy import func, select, update
-from users_app.database.models import User
-from users_app.schemas.schemas import PrivateCreateUserModel, PrivateUpdateUserModel, QueryParams, UpdateUserModel
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from users_app.database.models import User
+from users_app.schemas.schemas import (
+    PrivateCreateUserModel,
+    PrivateUpdateUserModel,
+    QueryParams,
+    UpdateUserModel,
+)
 
 
 class UserCRUD:
@@ -14,7 +20,7 @@ class UserCRUD:
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def read(self, user_id=int) -> User | None:
+    async def read(self, user_id=int) -> User:
         query = select(User).where(User.id == user_id)
         result = await self.session.execute(query)
         return result.scalar_one()

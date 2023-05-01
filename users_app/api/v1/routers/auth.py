@@ -2,15 +2,10 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+
 from users_app.exceptions.constants import E400
-
-from users_app.schemas.schemas import (
-    CurrentUserResponseModel,
-    LoginModel,
-    Payload,
-)
+from users_app.schemas.schemas import CurrentUserResponseModel, LoginModel, Payload
 from users_app.services.auth import AuthService, get_auth_service
-
 
 router = APIRouter(
     prefix='',

@@ -1,4 +1,5 @@
 from passlib.context import CryptContext
+
 from config import HASH_SCHEMA
 
 

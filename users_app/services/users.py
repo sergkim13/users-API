@@ -1,10 +1,11 @@
 from http import HTTPStatus
 
 from fastapi import Depends, HTTPException
+from passlib.context import CryptContext
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
-from users_app.database.crud.cities import CityCRUD
 
+from users_app.database.crud.cities import CityCRUD
 from users_app.database.crud.users import UserCRUD
 from users_app.database.models import User
 from users_app.database.settings import get_session
@@ -20,9 +21,8 @@ from users_app.schemas.schemas import (
     QueryParams,
     UpdateUserModel,
     UsersListMetaDataModel,
-    UsersListResponseModel
+    UsersListResponseModel,
 )
-from passlib.context import CryptContext
 
 
 class UserService:
@@ -30,7 +30,7 @@ class UserService:
         self,
         user_crud: UserCRUD,
         city_crud: CityCRUD,
-        pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto"),
+        pwd_context: CryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto'),
     ) -> None:
         self.user_crud = user_crud
         self.pwd_context = pwd_context
@@ -68,7 +68,7 @@ class UserService:
         if users_list == []:
             cities_list = []
         else:
-            cities_list = [await self._get_city(city_id=user.city) for user in users_list]
+            cities_list = [await self._get_city(city_id=user.city) for user in users_list if user]
 
         return PrivateUsersListResponseModel(
             data=users_list,
@@ -103,17 +103,17 @@ class UserService:
             )
 
     async def update(self, user_id: int,
-                     data:  UpdateUserModel | PrivateUpdateUserModel) -> User:
+                     data: UpdateUserModel | PrivateUpdateUserModel) -> User:
         user = await self.get_detail(user_id=user_id)
         try:
             updated_user = await self.user_crud.update(user=user, data=data)
-            return updated_user
         except IntegrityError as e:
-            if "ForeignKeyViolationError" in str(e.orig):
+            if 'ForeignKeyViolationError' in str(e.orig):
                 raise HTTPException(
                     status_code=HTTPStatus.NOT_FOUND,
-                    detail="City with given ID not found",
+                    detail='City with given ID not found',
                 )
+        return updated_user
 
     async def delete(self, user_id: int) -> str:
         await self.user_crud.delete(user_id=user_id)
@@ -128,7 +128,7 @@ class UserService:
             users_list = await self.user_crud.read_all(query)
         return (users_count, users_list)
 
-    async def _get_city(self, city_id: int) -> CitiesHintModel:
+    async def _get_city(self, city_id: int) -> CitiesHintModel | None:
         return await self.city_crud.read(city_id=city_id)
 
     # async def _verify_password(self, plain_password: str, hashed_password: str):

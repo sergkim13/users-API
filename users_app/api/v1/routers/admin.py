@@ -1,17 +1,17 @@
 from http import HTTPStatus
+
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from users_app.exceptions.constants import E400_401_403, E400_401_403_404, E401_403
 
+from users_app.exceptions.constants import E400_401_403, E400_401_403_404, E401_403
 from users_app.schemas.schemas import (
     PrivateCreateUserModel,
     PrivateDetailUserResponseModel,
     PrivateUpdateUserModel,
     PrivateUsersListResponseModel,
-    QueryParams
+    QueryParams,
 )
 from users_app.services.users import UserService, get_user_service
-
 
 router = APIRouter(
     prefix='/private',

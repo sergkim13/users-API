@@ -1,13 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from starlette.middleware.sessions import SessionMiddleware
-from users_app.middleware.auth import AuthdMidddleware
-from users_app.exceptions.handlers import ClientExceptionHandler, InternalExceptionHandler
-
 
 from config import SECRET_KEY
-from users_app.api.v1.routers.auth import router as auth_router
 from users_app.api.v1.routers.admin import router as admin_router
+from users_app.api.v1.routers.auth import router as auth_router
 from users_app.api.v1.routers.user import router as user_router
+from users_app.exceptions.handlers import (
+    ClientExceptionHandler,
+    InternalExceptionHandler,
+)
+from users_app.middleware.auth import AuthdMidddleware
 
 app = FastAPI(
     title='Users API',

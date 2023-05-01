@@ -1,11 +1,13 @@
+import re
 from http import HTTPStatus
 from typing import Callable
+
 from fastapi import HTTPException, Request
-from users_app.schemas.schemas import CodelessErrorResponseModel
-from users_app.services.auth import AuthService, get_auth_service
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-import re
+
+from users_app.schemas.schemas import CodelessErrorResponseModel
+from users_app.services.auth import AuthService, get_auth_service
 
 
 class AuthdMidddleware(BaseHTTPMiddleware):
