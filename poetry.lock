@@ -1,4 +1,19 @@
 [[package]]
+name = "aioredis"
+version = "2.0.1"
+description = "asyncio (PEP 3156) Redis support"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+async-timeout = "*"
+typing-extensions = "*"
+
+[package.extras]
+hiredis = ["hiredis (>=1.0)"]
+
+[[package]]
 name = "alembic"
 version = "1.10.4"
 description = "A database migration tool for SQLAlchemy."
@@ -30,6 +45,14 @@ sniffio = ">=1.1"
 doc = ["packaging", "sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
 test = ["contextlib2", "coverage[toml] (>=4.5)", "hypothesis (>=4.0)", "mock (>=4)", "pytest (>=7.0)", "pytest-mock (>=3.6.1)", "trustme", "uvloop (<0.15)", "uvloop (>=0.15)"]
 trio = ["trio (>=0.16,<0.22)"]
+
+[[package]]
+name = "async-timeout"
+version = "4.0.2"
+description = "Timeout context manager for asyncio programs"
+category = "main"
+optional = false
+python-versions = ">=3.6"
 
 [[package]]
 name = "asyncpg"
@@ -515,9 +538,13 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.3)", "coverage-enable-subprocess
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "12bf544389b1d48f5e80bfc3dff9ce872c4bee3dd901b905fdad9eb50599df28"
+content-hash = "cd1ca456097bcd5699cc96c7a61bdc41e282ccda93482ddd5e294c67de638274"
 
 [metadata.files]
+aioredis = [
+    {file = "aioredis-2.0.1-py3-none-any.whl", hash = "sha256:9ac0d0b3b485d293b8ca1987e6de8658d7dafcca1cddfcd1d506cae8cdebfdd6"},
+    {file = "aioredis-2.0.1.tar.gz", hash = "sha256:eaa51aaf993f2d71f54b70527c440437ba65340588afeb786cd87c55c89cd98e"},
+]
 alembic = [
     {file = "alembic-1.10.4-py3-none-any.whl", hash = "sha256:43942c3d4bf2620c466b91c0f4fca136fe51ae972394a0cc8b90810d664e4f5c"},
     {file = "alembic-1.10.4.tar.gz", hash = "sha256:295b54bbb92c4008ab6a7dcd1e227e668416d6f84b98b3c4446a2bc6214a556b"},
@@ -525,6 +552,10 @@ alembic = [
 anyio = [
     {file = "anyio-3.6.2-py3-none-any.whl", hash = "sha256:fbbe32bd270d2a2ef3ed1c5d45041250284e31fc0a4df4a5a6071842051a51e3"},
     {file = "anyio-3.6.2.tar.gz", hash = "sha256:25ea0d673ae30af41a0c442f81cf3b38c7e79fdc7b60335a4c14e05eb0947421"},
+]
+async-timeout = [
+    {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
+    {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
 ]
 asyncpg = [
     {file = "asyncpg-0.27.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:fca608d199ffed4903dce1bcd97ad0fe8260f405c1c225bdf0002709132171c2"},

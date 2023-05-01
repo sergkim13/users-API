@@ -4,6 +4,8 @@ from fastapi import Depends, HTTPException
 from passlib.context import CryptContext
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
+from users_app.cache.abstract_cache import AbstractCache
+from users_app.cache.module import get_cache
 
 from users_app.database.crud.cities import CityCRUD
 from users_app.database.crud.users import UserCRUD
@@ -28,27 +30,15 @@ from users_app.schemas.schemas import (
 class UserService:
     def __init__(
         self,
+        cache: AbstractCache,
         user_crud: UserCRUD,
         city_crud: CityCRUD,
         pwd_context: CryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto'),
     ) -> None:
+        self.cache = cache
         self.user_crud = user_crud
         self.pwd_context = pwd_context
         self.city_crud = city_crud
-
-    # async def authenticate_user(self, credentials: LoginModel) -> CurrentUserResponseModel:
-    #     user = await self.user_crud.read_by_login(credentials.login)
-    #     if not user:
-    #         raise HTTPException(
-    #             status_code=HTTPStatus.BAD_REQUEST,
-    #             detail='Invalid login or password.',
-    #         )
-    #     if not await self._verify_password(credentials.password, user.password):
-    #         raise HTTPException(
-    #             status_code=HTTPStatus.BAD_REQUEST,
-    #             detail='Invalid login or password.',
-    #         )
-    #     return user
 
     async def get_list(self, query: QueryParams) -> UsersListResponseModel:
         users_count, users_list = await self._get_list(query)
@@ -68,7 +58,7 @@ class UserService:
         if users_list == []:
             cities_list = []
         else:
-            cities_list = [await self._get_city(city_id=user.city) for user in users_list if user]
+            cities_list = [await self._get_city(city_id=getattr(user, 'city', None)) for user in users_list if user]
 
         return PrivateUsersListResponseModel(
             data=users_list,
@@ -83,31 +73,56 @@ class UserService:
         )
 
     async def get_detail(self, user_id: int) -> User:
+        cache_key = f'user-{user_id}'
+        user = await self.cache.get(cache_key)
+        if not user:
+            try:
+                user = await self.user_crud.read(user_id=user_id)
+                await self.cache.set(cache_key, user)
+            except NoResultFound:
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    detail='User not found.'
+                )
+        return user
+
+    async def create(self, data: PrivateCreateUserModel) -> PrivateDetailUserResponseModel:
+        try:
+            user = await self.user_crud.create(data=data)
+            await self.cache.clear('all')
+            return user
+        except IntegrityError as e:
+            if 'UniqueViolationError' in str(e.orig):
+                raise HTTPException(
+                    status_code=HTTPStatus.BAD_REQUEST,
+                    detail=f'User with email {data.email} already exists.'
+                )
+            elif 'ForeignKeyViolationError' in str(e.orig):
+                raise HTTPException(
+                    status_code=HTTPStatus.NOT_FOUND,
+                    detail='City with given ID not found',
+                )
+            else:
+                raise
+
+    async def update(self, user_id: int,
+                     data: UpdateUserModel | PrivateUpdateUserModel) -> User:
         try:
             user = await self.user_crud.read(user_id=user_id)
-            return user
+            updated_user = await self.user_crud.update(user=user, data=data)
+            await self.cache.clear(f'user-{user_id}')
+            await self.cache.clear('all')
         except NoResultFound:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
                 detail='User not found.'
             )
-
-    async def create(self, data: PrivateCreateUserModel) -> PrivateDetailUserResponseModel:
-        try:
-            user = await self.user_crud.create(data=data)
-            return user
-        except IntegrityError:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail=f'User with email {data.email} already exists.'
-            )
-
-    async def update(self, user_id: int,
-                     data: UpdateUserModel | PrivateUpdateUserModel) -> User:
-        user = await self.get_detail(user_id=user_id)
-        try:
-            updated_user = await self.user_crud.update(user=user, data=data)
         except IntegrityError as e:
+            if 'UniqueViolationError' in str(e.orig):
+                raise HTTPException(
+                    status_code=HTTPStatus.BAD_REQUEST,
+                    detail=f'User with email {data.email} already exists.'
+                )
             if 'ForeignKeyViolationError' in str(e.orig):
                 raise HTTPException(
                     status_code=HTTPStatus.NOT_FOUND,
@@ -116,8 +131,16 @@ class UserService:
         return updated_user
 
     async def delete(self, user_id: int) -> str:
-        await self.user_crud.delete(user_id=user_id)
-        return f'User {user_id} has been deleted.'
+        try:
+            await self.user_crud.delete(user_id=user_id)
+            await self.cache.clear(f'user-{user_id}')
+            await self.cache.clear('all')
+            return f'User {user_id} has been deleted.'
+        except NoResultFound:
+            raise HTTPException(
+                status_code=HTTPStatus.NOT_FOUND,
+                detail='User not found.'
+            )
 
     async def _get_list(self, query: QueryParams) -> tuple[int, list[User | None]]:
         users_count = await self._count_users()
@@ -125,20 +148,24 @@ class UserService:
         if query.page > max_pages:
             users_list = []
         else:
-            users_list = await self.user_crud.read_all(query)
+            cache_key = f'users-{query}'
+            users_list = await self.cache.get(cache_key)
+            if not users_list:
+                users_list = await self.user_crud.read_all(query)
+                await self.cache.set(cache_key, users_list)
         return (users_count, users_list)
 
     async def _get_city(self, city_id: int) -> CitiesHintModel | None:
         return await self.city_crud.read(city_id=city_id)
 
-    # async def _verify_password(self, plain_password: str, hashed_password: str):
-    #     return self.pwd_context.verify(plain_password, hashed_password)
-
     async def _count_users(self):
         return await self.user_crud.count_all()
 
 
-def get_user_service(session: AsyncSession = Depends(get_session)) -> UserService:
+def get_user_service(
+    session: AsyncSession = Depends(get_session),
+    cache: AbstractCache = Depends(get_cache),
+) -> UserService:
     user_crud = UserCRUD(session)
     city_crud = CityCRUD(session)
-    return UserService(user_crud, city_crud)
+    return UserService(cache, user_crud, city_crud)
