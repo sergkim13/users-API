@@ -4,7 +4,7 @@ from users_app.schemas.schemas import Payload
 
 
 class Cifer:
-    def __init__(self, secret_key: str = JWT_KEY, algorithm: str = ALGORITHM) -> None:
+    def __init__(self, secret_key: str, algorithm: str) -> None:
         self.secret_key = secret_key
         self.algorithm = algorithm
 

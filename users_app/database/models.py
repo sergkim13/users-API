@@ -1,9 +1,9 @@
-from passlib.context import CryptContext
 from sqlalchemy import Boolean, Date, ForeignKey, String
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from users_app.security.hasher import get_pwd_context
 
-pwd_context: CryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto')
+pwd_context = get_pwd_context()
 
 
 class Base(DeclarativeBase):

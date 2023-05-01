@@ -7,6 +7,7 @@ load_dotenv()
 SECRET_KEY = os.environ.get('SECRET_KEY')
 JWT_KEY = os.environ.get('JWT_KEY')
 ALGORITHM = os.environ.get('ALGORITHM')
+HASH_SCHEMA = os.environ.get('HASH_SCHEMA')
 
 DB_HOST = os.environ.get('DB_HOST')
 DB_PORT = os.environ.get('DB_PORT')
