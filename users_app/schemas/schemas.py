@@ -158,8 +158,9 @@ class CodelessErrorResponseModel(BaseModel):
     message: str
 
 
-class ErrorResponseModel(CodelessErrorResponseModel):
-    code: str
+class ErrorResponseModel(BaseModel):
+    code: int
+    message: str
 
 
 # Query
