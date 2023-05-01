@@ -1,7 +1,7 @@
 import jwt
 
 from config import ALGORITHM, JWT_KEY
-from users_app.schemas.schemas import Payload
+from users_app.validation.schemas import Payload
 
 
 class Cifer:

@@ -7,13 +7,13 @@ class AbstractCache(ABC):
         self.cache_client = cache_client
 
     @abstractmethod
-    async def get(self, key: str):
+    async def get(self, *args, **kwargs):
         raise NotImplementedError
 
     @abstractmethod
-    async def set(self, key: str, value: str, expire_time: int = 5):
+    async def set(self, *args, **kwargs):
         raise NotImplementedError
 
     @abstractmethod
-    async def clear(self, key: str):
+    async def clear(self, *args, **kwargs):
         raise NotImplementedError

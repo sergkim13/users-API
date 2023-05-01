@@ -4,14 +4,14 @@ from fastapi import Depends, HTTPException
 from passlib.context import CryptContext
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from users_app.cache.abstract_cache import AbstractCache
 from users_app.cache.module import get_cache
-
 from users_app.database.crud.cities import CityCRUD
 from users_app.database.crud.users import UserCRUD
 from users_app.database.models import User
 from users_app.database.settings import get_session
-from users_app.schemas.schemas import (
+from users_app.validation.schemas import (
     CitiesHintModel,
     PaginatedMetaDataModel,
     PrivateCreateUserModel,
@@ -58,7 +58,9 @@ class UserService:
         if users_list == []:
             cities_list = []
         else:
-            cities_list = [await self._get_city(city_id=getattr(user, 'city', None)) for user in users_list if user]
+            cities_list = [
+                await self._get_city(city_id=getattr(user, 'city')) for user in users_list
+            ]
 
         return PrivateUsersListResponseModel(
             data=users_list,

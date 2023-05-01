@@ -2,7 +2,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from users_app.database.models import User
-from users_app.schemas.schemas import (
+from users_app.validation.schemas import (
     PrivateCreateUserModel,
     PrivateUpdateUserModel,
     QueryParams,

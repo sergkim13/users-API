@@ -20,6 +20,8 @@ passlib = "^1.7.4"
 bcrypt = "^4.0.1"
 pyjwt = "^2.6.0"
 aioredis = "^2.0.1"
+httpx = "^0.24.0"
+sqlalchemy-utils = "^0.41.1"
 
 
 [tool.poetry.group.dev.dependencies]

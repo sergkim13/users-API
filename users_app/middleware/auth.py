@@ -6,8 +6,8 @@ from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from users_app.schemas.schemas import CodelessErrorResponseModel
 from users_app.services.auth import AuthService, get_auth_service
+from users_app.validation.schemas import CodelessErrorResponseModel
 
 
 class AuthdMidddleware(BaseHTTPMiddleware):

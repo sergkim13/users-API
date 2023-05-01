@@ -2,31 +2,37 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, Request
 
+from users_app.api.v1.routers.constants import (
+    USER_DETAIL,
+    USER_LIST,
+    USER_PREFIX,
+    USER_UPDATE,
+)
 from users_app.exceptions.constants import E400_401, E400_401_404
-from users_app.schemas.schemas import (
+from users_app.services.auth import AuthService, get_auth_service
+from users_app.services.users import UserService, get_user_service
+from users_app.validation.schemas import (
     CurrentUserResponseModel,
     QueryParams,
     UpdateUserModel,
     UpdateUserResponseModel,
     UsersListResponseModel,
 )
-from users_app.services.auth import AuthService, get_auth_service
-from users_app.services.users import UserService, get_user_service
 
 router = APIRouter(
-    prefix='/users',
+    prefix=USER_PREFIX,
     tags=['user'],
 )
 
 
 @router.get(
-    path='',
+    path=USER_LIST,
     status_code=HTTPStatus.OK,
     response_model=UsersListResponseModel,
     summary='Постраничное получение кратких данных обо всех пользователях',
     responses=E400_401,
 )
-async def user_list(
+async def users_list(
     query: QueryParams = Depends(),
     user_service: UserService = Depends(get_user_service),
 ) -> UsersListResponseModel:
@@ -36,7 +42,7 @@ async def user_list(
 
 
 @router.get(
-    path='/current',
+    path=USER_DETAIL,
     status_code=HTTPStatus.OK,
     response_model=CurrentUserResponseModel,
     summary='Получение данных о текущем пользователе',
@@ -54,7 +60,7 @@ async def user_detail(
 
 
 @router.patch(
-    path='/current',
+    path=USER_UPDATE,
     status_code=HTTPStatus.OK,
     summary='Изменение данных пользователя',
     response_model=UpdateUserResponseModel,

@@ -18,7 +18,7 @@ DB_USER = os.environ['DB_USER']
 DB_PASS = os.environ['DB_PASS']
 
 # Cache
-REDIS_HOST = os.environ["REDIS_HOST"]
-REDIS_PORT = os.environ["REDIS_PORT"]
-REDIS_DB = os.environ["REDIS_DB"]
-REDIS_EXP = os.environ["REDIS_EXP"]
+REDIS_HOST = os.environ['REDIS_HOST']
+REDIS_PORT = os.environ['REDIS_PORT']
+REDIS_DB = os.environ['REDIS_DB']
+REDIS_EXP = os.environ['REDIS_EXP']

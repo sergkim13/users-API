@@ -1,4 +1,4 @@
-from users_app.schemas.schemas import CodelessErrorResponseModel, ErrorResponseModel
+from users_app.validation.schemas import CodelessErrorResponseModel, ErrorResponseModel
 
 E400 = {
     400: {'description': 'Bad Request', 'model': ErrorResponseModel},

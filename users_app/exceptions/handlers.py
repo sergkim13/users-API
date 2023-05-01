@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 
-from users_app.schemas.schemas import CodelessErrorResponseModel, ErrorResponseModel
+from users_app.validation.schemas import CodelessErrorResponseModel, ErrorResponseModel
 
 
 class InternalExceptionHandler:

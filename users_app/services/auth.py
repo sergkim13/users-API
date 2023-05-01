@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from users_app.database.crud.users import UserCRUD
 from users_app.database.settings import get_session
-from users_app.schemas.schemas import CurrentUserResponseModel, LoginModel, Payload
 from users_app.security.cifer import Cifer, get_cifer
 from users_app.security.hasher import get_pwd_context
+from users_app.validation.schemas import CurrentUserResponseModel, LoginModel, Payload
 
 
 class AuthService:

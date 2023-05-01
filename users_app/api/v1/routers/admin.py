@@ -3,24 +3,32 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
+from users_app.api.v1.routers.constants import (
+    PRIVATE_PREFIX,
+    PRIVATE_USER_CREATE,
+    PRIVATE_USER_DELETE,
+    PRIVATE_USER_DETAIL,
+    PRIVATE_USER_UPDATE,
+    PRIVATE_USERS_LIST,
+)
 from users_app.exceptions.constants import E400_401_403, E400_401_403_404, E401_403
-from users_app.schemas.schemas import (
+from users_app.services.users import UserService, get_user_service
+from users_app.validation.schemas import (
     PrivateCreateUserModel,
     PrivateDetailUserResponseModel,
     PrivateUpdateUserModel,
     PrivateUsersListResponseModel,
     QueryParams,
 )
-from users_app.services.users import UserService, get_user_service
 
 router = APIRouter(
-    prefix='/private',
+    prefix=PRIVATE_PREFIX,
     tags=['admin'],
 )
 
 
 @router.get(
-    path='/users',
+    path=PRIVATE_USERS_LIST,
     status_code=HTTPStatus.OK,
     response_model=PrivateUsersListResponseModel,
     summary='Постраничное получение кратких данных обо всех пользователях',
@@ -36,7 +44,7 @@ async def private_user_list(
 
 
 @router.post(
-    path='/users',
+    path=PRIVATE_USER_CREATE,
     status_code=HTTPStatus.CREATED,
     response_model=PrivateDetailUserResponseModel,
     summary='Создание пользователя',
@@ -52,7 +60,7 @@ async def private_user_create(
 
 
 @router.get(
-    path='/users/{pk}',
+    path=PRIVATE_USER_DETAIL,
     status_code=HTTPStatus.OK,
     response_model=PrivateDetailUserResponseModel,
     summary='Детальное получение информации о пользователе',
@@ -68,7 +76,7 @@ async def private_user_detail(
 
 
 @router.patch(
-    path='/users/{pk}',
+    path=PRIVATE_USER_UPDATE,
     status_code=HTTPStatus.OK,
     response_model=PrivateDetailUserResponseModel,
     summary='Изменение информации о пользователе',
@@ -85,7 +93,7 @@ async def private_user_update(
 
 
 @router.delete(
-    path='/users/{pk}',
+    path=PRIVATE_USER_DELETE,
     status_code=HTTPStatus.NO_CONTENT,
     summary='Удаление пользователя',
     responses=E401_403,
