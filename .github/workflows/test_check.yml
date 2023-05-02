@@ -36,7 +36,7 @@ jobs:
     - name: test & publish code coverage
       uses: paambaati/codeclimate-action@v2.7.4
       env:
-        REDIS_HOST: 'redis_app'
+        REDIS_HOST: redis_app
         REDIS_DB: 1
         REDIS_PORT: 6379
         REDIS_EXP: 100
@@ -46,8 +46,8 @@ jobs:
         TEST_DB_NAME: test
         POSTGRES_PORT: 5432
         DB_PORT: 5432
-        POSTGRES_HOST: 'postgres_app'
-        DB_HOST: 'postgres_app'
+        POSTGRES_HOST: postgres_app
+        DB_HOST: postgres_app
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         JWT_KEY: ${{ secrets.JWT_KEY }}
         JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
