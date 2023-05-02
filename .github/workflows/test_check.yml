@@ -44,12 +44,14 @@ jobs:
         DB_PASS: test
         DB_NAME: test
         TEST_DB_NAME: test
+        POSTGRES_PORT: 5432
         DB_PORT: 5432
+        POSTGRES_HOST: 'postgres_app'
         DB_HOST: 'postgres_app'
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         JWT_KEY: ${{ secrets.JWT_KEY }}
         JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
-        HASH_SCHEMA: 'bcrypt'
+        HASH_SCHEMA: ${{ secrets.HASH_SCHEMA }}
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       with:
         coverageCommand: pytest --cov-report term-missing --cov=users_app --cov-report xml
