@@ -24,4 +24,4 @@ class Cifer:
 
 def get_cifer() -> Cifer:
     '''Returns `Cifer` instance for dependency injection.'''
-    return Cifer(JWT_KEY, JWT_ALGORITHM)
+    return Cifer(JWT_KEY, JWT_ALGORITHM)  # type: ignore
