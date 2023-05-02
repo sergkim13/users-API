@@ -3,7 +3,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
-from users_app.api.v1.routers.constants import LOGIN, LOGOUT
+from users_app.api.v1.routers.constants import LOGIN, LOGOUT, MSG_LOGGED_OUT
 from users_app.exceptions.constants import E400
 from users_app.services.auth import AuthService, get_auth_service
 from users_app.validation.schemas import CurrentUserResponseModel, LoginModel, Payload
@@ -43,4 +43,4 @@ async def login(
 async def logout(response: JSONResponse) -> JSONResponse:
     '''Log out of the system.'''
     response.delete_cookie('jwt_token')
-    return 'Logged out successfully.'
+    return MSG_LOGGED_OUT

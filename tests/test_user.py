@@ -1,10 +1,18 @@
 from http import HTTPStatus
+
 import pytest
 
-# from tests.fixtures.users import fake_user
-from users_app.api.v1.routers.constants import LOGIN, USERS_LIST_FULL, USER_DETAIL_FULL, USER_UPDATE_FULL
-from users_app.exceptions.constants import MSG_NOT_AUTHENTICATED
-from users_app.validation.schemas import CurrentUserResponseModel, LoginModel, UpdateUserModel, UpdateUserResponseModel, UsersListResponseModel
+from users_app.api.v1.routers.constants import (
+    LOGIN,
+    USER_DETAIL_FULL,
+    USER_UPDATE_FULL,
+    USERS_LIST_FULL,
+)
+from users_app.validation.schemas import (
+    CurrentUserResponseModel,
+    UpdateUserResponseModel,
+    UsersListResponseModel,
+)
 
 
 @pytest.mark.asyncio
@@ -43,10 +51,13 @@ async def test_get_current(client, fixture_user, user_login_form):
 async def test_update_current(client, fixture_user, user_login_form):
     '''Check normal response of `user_update` endpoint.'''
     await client.post(LOGIN, json=user_login_form)
-    response = await client.patch(USER_UPDATE_FULL, json={
-        'email': 'brad_pitt@example.com',
-        'other_name': 'braddford'
-    })
+    response = await client.patch(
+        USER_UPDATE_FULL,
+        json={
+            'email': 'brad_pitt@example.com',
+            'other_name': 'braddford'
+        }
+    )
     assert response.status_code == HTTPStatus.OK
     assert UpdateUserResponseModel.validate(response.json())
     assert response.json()['email'] == 'brad_pitt@example.com'

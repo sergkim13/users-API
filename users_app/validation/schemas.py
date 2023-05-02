@@ -107,6 +107,10 @@ class PrivateDetailUserResponseModel(BaseModel):
     @root_validator(pre=True)
     def set_defaults(cls, values):
         new_values = dict(values)
+        if not new_values.get('other_name'):
+            new_values['other_name'] = ''
+        if not new_values.get('phone'):
+            new_values['phone'] = ''
         if not new_values.get('city'):
             new_values['city'] = 0
         if not new_values.get('additional_info'):

@@ -65,7 +65,8 @@ class UserService:
             cities_list = []
         else:
             cities_list = [
-                await self._get_city(city_id=getattr(user, 'city', None)) for user in users_list
+                await self._get_city(
+                    city_id=getattr(user, 'city', None)) for user in users_list  # type: ignore
             ]
 
         return PrivateUsersListResponseModel(
@@ -140,12 +141,11 @@ class UserService:
             else:
                 raise
 
-    async def delete(self, user_id: int) -> str:
+    async def delete(self, user_id: int) -> None:
         try:
             await self.user_crud.delete(user_id=user_id)
             await self.cache.clear(f'user-{user_id}')
             await self.cache.clear('all')
-            return f'User {user_id} has been deleted.'
         except NoResultFound:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,

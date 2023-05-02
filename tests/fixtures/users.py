@@ -46,6 +46,11 @@ def admin_data():
     }
 
 
+@pytest.fixture
+def admin_login_form(admin_data):
+    return LoginModel(login=admin_data['email'], password=admin_data['password']).dict()
+
+
 @pytest_asyncio.fixture
 async def fixture_admin(session, admin_data):
     user_crud = UserCRUD(session)

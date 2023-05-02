@@ -6,6 +6,7 @@ import pytest
 from users_app.api.v1.routers.constants import (
     LOGIN,
     LOGOUT,
+    MSG_LOGGED_OUT,
     PRIVATE_USER_CREATE_FULL,
     PRIVATE_USER_DELETE_FULL,
     PRIVATE_USER_DETAIL_FULL,
@@ -51,6 +52,7 @@ async def test_get_logout(client, fixture_user):
     '''Checks normal response of `logout` endpoint.'''
     response = await client.get(LOGOUT)
     assert response.status_code == HTTPStatus.OK
+    assert response.json() == MSG_LOGGED_OUT
     assert not response.cookies.get('jwt_token')
 
 
