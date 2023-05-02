@@ -6,6 +6,7 @@ from users_app.database.models import City
 
 class CityCRUD:
     '''`City` class which provides CRUD operations.'''
+
     def __init__(self, session: AsyncSession) -> None:
         '''Init `CityCRUD` instance with given session.'''
         self.session = session

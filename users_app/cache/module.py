@@ -9,6 +9,7 @@ from users_app.cache.settings import EXPIRE_TIME, redis_client
 
 class RedisCache(AbstractCache):
     '''Cache with Redis client.'''
+
     def __init__(self, cache_client: Redis) -> None:
         '''Init instance with given client.'''
         self.redis_client = cache_client

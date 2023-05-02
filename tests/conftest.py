@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy_utils import create_database, database_exists
 
-from config import DB_HOST, DB_NAME, DB_PASS, DB_PORT, DB_USER
+from config import DB_HOST, DB_PASS, DB_PORT, DB_USER, TEST_DB_NAME
 from users_app.cache.settings import redis_client
 from users_app.database.models import Base
 from users_app.database.settings import get_session
@@ -16,7 +16,7 @@ pytest_plugins = [
 ]
 
 # Test database fixtures
-SQLALCHEMY_TEST_DATABASE_URL = f'postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/test_{DB_NAME}'
+SQLALCHEMY_TEST_DATABASE_URL = f'postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{TEST_DB_NAME}'
 
 
 # Test database fixtures

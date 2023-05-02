@@ -24,3 +24,6 @@ compose-test:
 
 stop-test:
 	docker compose -f docker-compose.test.yaml -p testing down
+
+migrate:
+	alembic upgrade head

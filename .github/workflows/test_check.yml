@@ -1,0 +1,51 @@
+name: tests check
+
+on: push
+
+jobs:
+
+  container-job:
+    runs-on: ubuntu-latest
+    services:
+      postgres_app:
+        image: postgres:15.1-alpine
+        env:
+          POSTGRES_DB: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_USER: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis_app:
+        image: redis:latest
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+    - run: pip install -r requirements.txt
+    - run: alembic upgrade head
+    - name: test & publish code coverage
+      uses: paambaati/codeclimate-action@v2.7.4
+      env:
+        REDIS_HOST: 'redis_app'
+        REDIS_DB: 1
+        REDIS_PORT: 6379
+        DB_USER: test
+        DB_PASS: test
+        DB_NAME: test
+        TEST_DB_NAME: test
+        DB_PORT: 5432
+        DB_HOST: 'postgres_app'
+
+        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      with:
+        coverageCommand: pytest --cov-report term-missing --cov=users_app --cov-report xml

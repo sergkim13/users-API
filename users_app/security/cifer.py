@@ -6,6 +6,7 @@ from users_app.validation.schemas import Payload
 
 class Cifer:
     '''Cifer which provides cryptographic operations for JWT handling.'''
+
     def __init__(self, secret_key: str, algorithm: str) -> None:
         self.secret_key = secret_key
         self.algorithm = algorithm

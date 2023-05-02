@@ -1,8 +1,19 @@
 from http import HTTPStatus
+
 import pytest
 
-from users_app.api.v1.routers.constants import LOGIN, PRIVATE_USERS_LIST_FULL, PRIVATE_USER_CREATE_FULL, PRIVATE_USER_DELETE_FULL, PRIVATE_USER_DETAIL_FULL, PRIVATE_USER_UPDATE_FULL
-from users_app.validation.schemas import PrivateDetailUserResponseModel, PrivateUsersListResponseModel
+from users_app.api.v1.routers.constants import (
+    LOGIN,
+    PRIVATE_USER_CREATE_FULL,
+    PRIVATE_USER_DELETE_FULL,
+    PRIVATE_USER_DETAIL_FULL,
+    PRIVATE_USER_UPDATE_FULL,
+    PRIVATE_USERS_LIST_FULL,
+)
+from users_app.validation.schemas import (
+    PrivateDetailUserResponseModel,
+    PrivateUsersListResponseModel,
+)
 
 
 @pytest.mark.asyncio

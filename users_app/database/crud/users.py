@@ -12,6 +12,7 @@ from users_app.validation.schemas import (
 
 class UserCRUD:
     '''`User` class which provides CRUD operations.'''
+
     def __init__(self, session: AsyncSession) -> None:
         '''Init `UserCRUD` instance with given session.'''
         self.session = session
