@@ -15,7 +15,7 @@ config = context.config
 
 section = config.config_ini_section
 config.set_section_option(section, "DB_HOST", str(DB_HOST))
-config.set_section_option(section, "DB_PORT", str(DB_PORT))
+config.set_section_option(section, "DB_PORT", int(DB_PORT))
 config.set_section_option(section, "DB_NAME", str(DB_NAME))
 config.set_section_option(section, "DB_PASS", str(DB_PASS))
 config.set_section_option(section, "DB_USER", str(DB_USER))
