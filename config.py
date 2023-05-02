@@ -8,7 +8,7 @@ load_dotenv()
 SECRET_KEY = os.environ.get('SECRET_KEY')
 JWT_KEY = os.environ.get('JWT_KEY')
 JWT_ALGORITHM = os.environ.get('JWT_ALGORITHM')
-HASH_SCHEMA = os.environ.get('HASH_SCHEMA')
+HASH_SCHEMA = os.environ.get('HASH_SCHEMA', 'bcrypt')
 
 # Database
 DB_HOST = os.environ.get('DB_HOST')
