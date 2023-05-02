@@ -92,10 +92,17 @@ class UpdateUserResponseModel(BaseModel):
 
 
 # Private detail
-class PrivateDetailUserResponseModel(CurrentUserResponseModel):
+class PrivateDetailUserResponseModel(BaseModel):
     id: int
+    first_name: str
+    last_name: str
+    other_name: str
+    email: str
+    phone: str
+    birthday: date | None
     city: int
     additional_info: str
+    is_admin: bool
 
     @root_validator(pre=True)
     def set_defaults(cls, values):
@@ -146,8 +153,14 @@ class PrivateCreateUserModel(BaseModel):
 
 
 # Private update
-class PrivateUpdateUserModel(UpdateUserModel):
+class PrivateUpdateUserModel(BaseModel):
     id: int
+    first_name: str | None
+    last_name: str | None
+    other_name: str | None
+    email: str | None
+    phone: str | None
+    birthday: date | None
     city: int | None
     additional_info: str | None
     is_admin: bool | None

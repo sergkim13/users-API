@@ -6,6 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from users_app.database.crud.users import UserCRUD
 from users_app.database.settings import get_session
+from users_app.exceptions.constants import (
+    MSG_INVALID_CREDS,
+    MSG_NOT_AUTHENTICATED,
+    MSG_NOT_AUTHORIZED,
+)
 from users_app.security.cifer import Cifer, get_cifer
 from users_app.security.hasher import get_pwd_context
 from users_app.validation.schemas import CurrentUserResponseModel, LoginModel, Payload
@@ -26,7 +31,7 @@ class AuthService:
         if not user or not self._verify_password(credentials.password, user.password):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail='Invalid login or password.',
+                detail=MSG_INVALID_CREDS,
             )
         return user
 
@@ -38,7 +43,7 @@ class AuthService:
         if not session_token:
             raise HTTPException(
                 status_code=HTTPStatus.UNAUTHORIZED,
-                detail='You are not authentificated. Please log in.',
+                detail=MSG_NOT_AUTHENTICATED,
             )
         payload = self.cifer.decode(session_token)
         return payload
@@ -48,7 +53,7 @@ class AuthService:
         if not payload.get('is_admin'):
             raise HTTPException(
                 status_code=HTTPStatus.FORBIDDEN,
-                detail='You have no permissions.',
+                detail=MSG_NOT_AUTHORIZED,
             )
 
     def _verify_password(self, plain_password: str, hashed_password: str) -> bool:

@@ -11,6 +11,12 @@ from users_app.database.crud.cities import CityCRUD
 from users_app.database.crud.users import UserCRUD
 from users_app.database.models import User
 from users_app.database.settings import get_session
+from users_app.exceptions.constants import (
+    MSG_CITY_NOT_FOUND,
+    MSG_EMAIL_EXISTS,
+    MSG_USER_NOT_FOUND,
+)
+from users_app.security.hasher import get_pwd_context
 from users_app.validation.schemas import (
     CitiesHintModel,
     PaginatedMetaDataModel,
@@ -33,7 +39,7 @@ class UserService:
         cache: AbstractCache,
         user_crud: UserCRUD,
         city_crud: CityCRUD,
-        pwd_context: CryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto'),
+        pwd_context: CryptContext,
     ) -> None:
         self.cache = cache
         self.user_crud = user_crud
@@ -59,7 +65,7 @@ class UserService:
             cities_list = []
         else:
             cities_list = [
-                await self._get_city(city_id=getattr(user, 'city')) for user in users_list
+                await self._get_city(city_id=getattr(user, 'city', None)) for user in users_list
             ]
 
         return PrivateUsersListResponseModel(
@@ -84,7 +90,7 @@ class UserService:
             except NoResultFound:
                 raise HTTPException(
                     status_code=HTTPStatus.NOT_FOUND,
-                    detail='User not found.'
+                    detail=MSG_USER_NOT_FOUND
                 )
         return user
 
@@ -97,12 +103,12 @@ class UserService:
             if 'UniqueViolationError' in str(e.orig):
                 raise HTTPException(
                     status_code=HTTPStatus.BAD_REQUEST,
-                    detail=f'User with email {data.email} already exists.'
+                    detail=MSG_EMAIL_EXISTS.format(data.email)
                 )
             elif 'ForeignKeyViolationError' in str(e.orig):
                 raise HTTPException(
                     status_code=HTTPStatus.NOT_FOUND,
-                    detail='City with given ID not found',
+                    detail=MSG_CITY_NOT_FOUND,
                 )
             else:
                 raise
@@ -114,23 +120,25 @@ class UserService:
             updated_user = await self.user_crud.update(user=user, data=data)
             await self.cache.clear(f'user-{user_id}')
             await self.cache.clear('all')
+            return updated_user
         except NoResultFound:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail='User not found.'
+                detail=MSG_USER_NOT_FOUND
             )
         except IntegrityError as e:
             if 'UniqueViolationError' in str(e.orig):
                 raise HTTPException(
                     status_code=HTTPStatus.BAD_REQUEST,
-                    detail=f'User with email {data.email} already exists.'
+                    detail=MSG_EMAIL_EXISTS.format(data.email)
                 )
             if 'ForeignKeyViolationError' in str(e.orig):
                 raise HTTPException(
                     status_code=HTTPStatus.NOT_FOUND,
-                    detail='City with given ID not found',
+                    detail=MSG_CITY_NOT_FOUND,
                 )
-        return updated_user
+            else:
+                raise
 
     async def delete(self, user_id: int) -> str:
         try:
@@ -141,7 +149,7 @@ class UserService:
         except NoResultFound:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail='User not found.'
+                detail=MSG_USER_NOT_FOUND,
             )
 
     async def _get_list(self, query: QueryParams) -> tuple[int, list[User | None]]:
@@ -167,7 +175,8 @@ class UserService:
 def get_user_service(
     session: AsyncSession = Depends(get_session),
     cache: AbstractCache = Depends(get_cache),
+    pwd_context: CryptContext = Depends(get_pwd_context),
 ) -> UserService:
     user_crud = UserCRUD(session)
     city_crud = CityCRUD(session)
-    return UserService(cache, user_crud, city_crud)
+    return UserService(cache, user_crud, city_crud, pwd_context)
