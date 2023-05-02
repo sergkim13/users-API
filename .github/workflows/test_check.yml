@@ -5,7 +5,7 @@ on: push
 jobs:
 
   container-job:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     services:
       postgres_app:
         image: postgres:15.1-alpine
