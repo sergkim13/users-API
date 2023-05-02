@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Security
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ.get('SECRET_KEY')
+# SECRET_KEY = os.environ['SECRET_KEY']
 JWT_KEY = os.environ['JWT_KEY']
 JWT_ALGORITHM = os.environ['JWT_ALGORITHM']
 HASH_SCHEMA = os.environ['HASH_SCHEMA']
