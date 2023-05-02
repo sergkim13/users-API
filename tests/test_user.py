@@ -17,7 +17,7 @@ from users_app.validation.schemas import (
 
 @pytest.mark.asyncio
 async def test_get_list(client, fixture_user, user_login_form, query_params):
-    '''Check normal response of `users_list` endpoint.'''
+    '''Checksnormal response of `users_list` endpoint.'''
     await client.post(LOGIN, json=user_login_form)
     response = await client.get(USERS_LIST_FULL, params=query_params.dict())
     assert response.status_code == HTTPStatus.OK
@@ -33,7 +33,7 @@ async def test_get_list(client, fixture_user, user_login_form, query_params):
 
 @pytest.mark.asyncio
 async def test_get_current(client, fixture_user, user_login_form):
-    '''Check normal response of `user_current` endpoint.'''
+    '''Checksnormal response of `user_current` endpoint.'''
     await client.post(LOGIN, json=user_login_form)
     response = await client.get(USER_DETAIL_FULL)
     assert response.status_code == HTTPStatus.OK
@@ -49,7 +49,7 @@ async def test_get_current(client, fixture_user, user_login_form):
 
 @pytest.mark.asyncio
 async def test_update_current(client, fixture_user, user_login_form):
-    '''Check normal response of `user_update` endpoint.'''
+    '''Checksnormal response of `user_update` endpoint.'''
     await client.post(LOGIN, json=user_login_form)
     response = await client.patch(
         USER_UPDATE_FULL,

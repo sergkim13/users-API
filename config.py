@@ -7,7 +7,7 @@ load_dotenv()
 # Security
 SECRET_KEY = os.environ['SECRET_KEY']
 JWT_KEY = os.environ['JWT_KEY']
-ALGORITHM = os.environ['ALGORITHM']
+JWT_ALGORITHM = os.environ['JWT_ALGORITHM']
 HASH_SCHEMA = os.environ['HASH_SCHEMA']
 
 # Database

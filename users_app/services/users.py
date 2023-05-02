@@ -41,12 +41,14 @@ class UserService:
         city_crud: CityCRUD,
         pwd_context: CryptContext,
     ) -> None:
+        '''Init `UserService` instance.'''
         self.cache = cache
         self.user_crud = user_crud
         self.pwd_context = pwd_context
         self.city_crud = city_crud
 
     async def get_list(self, query: QueryParams) -> UsersListResponseModel:
+        '''Gets list of users and returns response serialized for `user` paths.'''
         users_count, users_list = await self._get_list(query)
         return UsersListResponseModel(
             data=users_list,
@@ -60,6 +62,7 @@ class UserService:
         )
 
     async def get_list_private(self, query: QueryParams) -> PrivateUsersListResponseModel:
+        '''Gets list of users and returns response serialized for `private` paths.'''
         users_count, users_list = await self._get_list(query)
         if users_list == []:
             cities_list = []
@@ -82,6 +85,7 @@ class UserService:
         )
 
     async def get_detail(self, user_id: int) -> User:
+        '''Returns a specific `User`.'''
         cache_key = f'user-{user_id}'
         user = await self.cache.get(cache_key)
         if not user:
@@ -96,6 +100,7 @@ class UserService:
         return user
 
     async def create(self, data: PrivateCreateUserModel) -> PrivateDetailUserResponseModel:
+        '''Creates new `User`.'''
         try:
             user = await self.user_crud.create(data=data)
             await self.cache.clear('all')
@@ -116,6 +121,7 @@ class UserService:
 
     async def update(self, user_id: int,
                      data: UpdateUserModel | PrivateUpdateUserModel) -> User:
+        '''Updates specific `User`.'''
         try:
             user = await self.user_crud.read(user_id=user_id)
             updated_user = await self.user_crud.update(user=user, data=data)
@@ -142,6 +148,7 @@ class UserService:
                 raise
 
     async def delete(self, user_id: int) -> None:
+        '''Delete `User`.'''
         try:
             await self.user_crud.delete(user_id=user_id)
             await self.cache.clear(f'user-{user_id}')
@@ -153,6 +160,7 @@ class UserService:
             )
 
     async def _get_list(self, query: QueryParams) -> tuple[int, list[User | None]]:
+        '''Gets list of users and returns it with quantity of all users.'''
         users_count = await self._count_users()
         max_pages = (users_count + query.size - 1) // query.size
         if query.page > max_pages:
@@ -166,9 +174,11 @@ class UserService:
         return (users_count, users_list)
 
     async def _get_city(self, city_id: int) -> CitiesHintModel | None:
+        '''Gets a specific `City`.'''
         return await self.city_crud.read(city_id=city_id)
 
     async def _count_users(self):
+        '''Counts all users.'''
         return await self.user_crud.count_all()
 
 
@@ -177,6 +187,7 @@ def get_user_service(
     cache: AbstractCache = Depends(get_cache),
     pwd_context: CryptContext = Depends(get_pwd_context),
 ) -> UserService:
+    '''Returns `UserService` instance for dependency injection.'''
     user_crud = UserCRUD(session)
     city_crud = CityCRUD(session)
     return UserService(cache, user_crud, city_crud, pwd_context)

@@ -7,7 +7,7 @@ from users_app.validation.schemas import PrivateDetailUserResponseModel, Private
 
 @pytest.mark.asyncio
 async def test_get_list_private(client, fixture_admin, admin_login_form, query_params):
-    '''Check normal response of `users_list_private` endpoint.'''
+    '''Checksnormal response of `users_list_private` endpoint.'''
     await client.post(LOGIN, json=admin_login_form)
     response = await client.get(PRIVATE_USERS_LIST_FULL, params=query_params.dict())
     assert response.status_code == HTTPStatus.OK
@@ -23,7 +23,7 @@ async def test_get_list_private(client, fixture_admin, admin_login_form, query_p
 
 @pytest.mark.asyncio
 async def test_create_private(client, fixture_admin, admin_login_form, user_data):
-    '''Check normal response of `user_create_private` endpoint.'''
+    '''Checksnormal response of `user_create_private` endpoint.'''
     await client.post(LOGIN, json=admin_login_form)
     response = await client.post(PRIVATE_USER_CREATE_FULL, json=user_data)
     assert response.status_code == HTTPStatus.CREATED
@@ -42,7 +42,7 @@ async def test_create_private(client, fixture_admin, admin_login_form, user_data
 
 @pytest.mark.asyncio
 async def test_get_detail_private(client, fixture_admin, admin_login_form, fixture_user):
-    '''Check normal response of `user_deatail_private` endpoint.'''
+    '''Checksnormal response of `user_deatail_private` endpoint.'''
     await client.post(LOGIN, json=admin_login_form)
     response = await client.get(PRIVATE_USER_DETAIL_FULL.format(pk=fixture_user.id))
     assert response.status_code == HTTPStatus.OK
@@ -61,7 +61,7 @@ async def test_get_detail_private(client, fixture_admin, admin_login_form, fixtu
 
 @pytest.mark.asyncio
 async def test_update_private(client, fixture_admin, admin_login_form, fixture_user):
-    '''Check normal response of `user_update_private` endpoint.'''
+    '''Checksnormal response of `user_update_private` endpoint.'''
     await client.post(LOGIN, json=admin_login_form)
     response = await client.patch(
         PRIVATE_USER_UPDATE_FULL.format(pk=fixture_user.id),
@@ -87,7 +87,7 @@ async def test_update_private(client, fixture_admin, admin_login_form, fixture_u
 
 @pytest.mark.asyncio
 async def test_delete_private(client, fixture_admin, admin_login_form, fixture_user):
-    '''Check normal response of `user_delete_private` endpoint.'''
+    '''Checksnormal response of `user_delete_private` endpoint.'''
     await client.post(LOGIN, json=admin_login_form)
     response = await client.delete(PRIVATE_USER_DELETE_FULL.format(pk=fixture_user.id))
     check_existance = await client.get(PRIVATE_USER_DETAIL_FULL.format(pk=fixture_user.id))

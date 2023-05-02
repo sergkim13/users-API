@@ -11,13 +11,17 @@ from users_app.validation.schemas import CodelessErrorResponseModel
 
 
 class AuthdMidddleware(BaseHTTPMiddleware):
+    '''Custom middleware for authentification and authorization handling.'''
+
     def __init__(self, *args, **kwargs) -> None:
+        '''Init `AuthdMidddleware` instance.'''
         super().__init__(*args, **kwargs)
         self.auth_service: AuthService = get_auth_service()
         self.user_routes_schema = r'^\/users.*'
         self.private_routes_schema = r'^\/private.*'
 
     async def dispatch(self, request: Request, call_next: Callable):
+        '''Custom `disptatch` method for getting and cheching JWT in request's cookie.'''
         try:
             if re.match(self.private_routes_schema, request.url.path):
                 await self.auth_service.check_jwt_private(request)
