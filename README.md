@@ -2,6 +2,7 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/d995c9ecea3af7f1c33f/maintainability)](https://codeclimate.com/github/sergkim13/users_API/maintainability)
 [![Linters check](https://github.com/sergkim13/users_API/actions/workflows/linters_check.yml/badge.svg)](https://github.com/sergkim13/users_API/actions/workflows/linters_check.yml)
+[![Test coverage](https://api.codeclimate.com/v1/badges/d995c9ecea3af7f1c33f/test_coverage)](https://codeclimate.com/github/sergkim13/users_API/test_coverage)
 
 ### Description:
 Users API allows you to get information about users. Includes authentication and authorizaion by JWT.
